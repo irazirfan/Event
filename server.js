@@ -24,6 +24,38 @@ app.use('/js', express.static(__dirname + '/node_modules/tether/dist/js'));
 app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 
+/*
+	database connection details
+	localhost - when is production mode, change this to your host
+	user      - user name of the database
+	password  - database password
+	database  - database is the name of the database  
+*/
+const con = mysql.createConnection({
+	host: "localhost",
+	user: "root",
+	password: "",
+	database: "mydb"
+});
+
+// global site title and base url
+const siteTitle = "Simple Application";
+const baseUrl = "http://localhost:4000/";
+
+// default page is laoded and the data is being called from mysql database
+app.get('/', function(req, res) {
+
+	// get the event list
+	con.query("SELECT * FROM e_events ORDER BY e_start_date DESC", function (err, result){
+		res.render('pages/index',{
+			siteTitle: siteTitle,
+			pageTitle: "Event List",
+			items: result
+		});	
+	});
+
+});
+
 // connect to the server
 var server = app.listen(4000, function(){
   console.log('Server started on 4000....');
