@@ -40,7 +40,7 @@ const con = mysql.createConnection({
 
 // global site title and base url
 const siteTitle = "Simple Application";
-const baseUrl = "http://localhost:4000/";
+const baseURL = "http://localhost:4000/"
 
 // default page is laoded and the data is being called from mysql database
 app.get('/', function(req, res) {
@@ -55,6 +55,31 @@ app.get('/', function(req, res) {
 	});
 
 });
+
+// add new event
+app.get('/event/add', function(req, res) {
+
+	res.render('pages/add-event.ejs',{
+		siteTitle: siteTitle,
+		pageTitle: "Add New Event",
+		items: ''
+	});
+});
+
+// post method
+app.post('/event/add', function(req, res){
+	var query =   "INSERT INTO `e_events` (e_name,e_start_date,e_end_date,e_desc,e_location) VALUES (";
+	    query +=  " '"+req.body.e_name+"',";
+	    query +=  " '"+dateFormat(req.body.e_start_date,"yyyy-mm-dd")+"',";
+	    query +=  " '"+dateFormat(req.body.e_end_date,"yyyy-mm-dd")+"',";
+	    query +=  " '"+req.body.e_desc+"',";
+	    query +=  " '"+req.body.e_location+"')";
+
+	con.query(query, function (err, result) {
+		res.redirect(baseURL);
+	});
+});
+
 
 // connect to the server
 var server = app.listen(4000, function(){
