@@ -80,6 +80,54 @@ app.post('/event/add', function(req, res){
 	});
 });
 
+// update event get method
+app.get('/event/edit/:event_id', function(req, res){
+
+	con.query(" SELECT * FROM `e_events` WHERE `e_id` = '"+ req.params.event_id +"'", function(err, result){
+
+		//format the date
+		result[0].e_start_date = dateFormat(result[0].e_start_date,"yyyy-mm-dd");
+		result[0].e_end_date = dateFormat(result[0].e_end_date,"yyyy-mm-dd");
+		
+		res.render('pages/edit-event', {
+			siteTitle: siteTitle,
+			pageTitle: "Editing Event: " + result[0].e_name,
+			item: result
+		});
+	});
+});
+
+// update event post method
+app.post('/event/edit/:event_id', function(req, res){
+
+	var query =    " UPDATE `e_events` SET";
+		query +=   " `e_name` = '"+req.body.e_name+"',";
+		query +=   " `e_start_date` = '"+req.body.e_start_date+"',";
+		query +=   " `e_end_date` = '"+req.body.e_end_date+"',";
+		query +=   " `e_desc` = '"+req.body.e_desc+"',";
+		query +=   " `e_location` = '"+req.body.e_location+"' ";
+		query +=   " WHERE `e_events`.`e_id` = "+req.body.e_id+"";
+
+	con.query(query, function(err, result) {
+
+		if(result.affectedRows)
+		{
+			res.redirect(baseURL);
+		}
+	});
+});
+
+// delete method
+app.get('/event/delete/:event_id', function(req, res){
+
+	con.query("DELETE FROM `e_events` WHERE `e_id` = '"+req.params.event_id+"'", function (err, result) {
+
+		if (result.affectedRows)
+		{
+			res.redirect(baseURL);
+		}
+	});
+});
 
 // connect to the server
 var server = app.listen(4000, function(){
